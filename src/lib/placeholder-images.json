@@ -1,0 +1,34 @@
+{
+  "placeholderImages": [
+    {
+      "id": "valorant-banner",
+      "description": "Valorant tournament banner",
+      "imageUrl": "https://images.unsplash.com/photo-1623820919239-0d0ff10797a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxlc3BvcnRzJTIwdmFsb3JhbnR8ZW58MHx8fHwxNzYzMDE1MDMzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "esports valorant"
+    },
+    {
+      "id": "cod-banner",
+      "description": "Call of Duty tournament banner",
+      "imageUrl": "https://images.unsplash.com/photo-1760604359281-b738de589439?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxlc3BvcnRzJTIwY2FsbCUyMG9mJTIwZHV0eXxlbnwwfHx8fDE3NjMwMTUwMzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "esports call of duty"
+    },
+    {
+      "id": "league-banner",
+      "description": "League of Legends tournament banner",
+      "imageUrl": "https://images.unsplash.com/photo-1762136537222-59f23fcb4e31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxlc3BvcnRzJTIwbGVhZ3VlJTIwbGVnZW5kc3xlbnwwfHx8fDE3NjMwMTUwMzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "esports league legends"
+    },
+    {
+      "id": "generic-qr",
+      "description": "Generic QR code for payment",
+      "imageUrl": "https://images.unsplash.com/photo-1629128625414-374a9e16d56a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxxciUyMGNvZGV8ZW58MHx8fHwxNzYyODk0MTgzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "qr code"
+    },
+    {
+      "id": "football-hero",
+      "description": "Football on a stadium pitch",
+      "imageUrl": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHwxfHxmb290YmFsbCUyMHN0YWRpdW18ZW58MHx8fHwxNzYzMTIzNjE2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "football stadium"
+    }
+  ]
+}

@@ -1,0 +1,310 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user profile in the eSports HQ application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's chosen username.",
+          "format": "string"
+        },
+        "region": {
+          "type": "string",
+          "description": "The user's geographical region."
+        },
+        "profilePictureURL": {
+          "type": "string",
+          "description": "URL of the user's profile picture.",
+          "format": "uri"
+        },
+        "email": {
+          "type": "string",
+          "description": "User's contact email address",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "region",
+        "profilePictureURL",
+        "email"
+      ]
+    },
+    "Tournament": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Tournament",
+      "type": "object",
+      "description": "Represents a tournament in the eSports HQ application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Tournament entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the tournament."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the tournament."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the tournament.",
+          "format": "date-time"
+        },
+        "entryFee": {
+          "type": "number",
+          "description": "The entry fee for the tournament."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency for the entry fee.",
+          "enum": [
+            "USD",
+            "INR"
+          ]
+        },
+        "qrCodeImageURL": {
+          "type": "string",
+          "description": "URL of the QR code image for the tournament.",
+          "format": "uri"
+        },
+        "maxTeamLimit": {
+          "type": "number",
+          "description": "The maximum number of teams that can register for the tournament."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "date",
+        "entryFee",
+        "currency",
+        "qrCodeImageURL",
+        "maxTeamLimit"
+      ]
+    },
+    "Team": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Team",
+      "type": "object",
+      "description": "Represents a team participating in a tournament.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Team entity."
+        },
+        "teamName": {
+          "type": "string",
+          "description": "The name of the team."
+        },
+        "playerUsernames": {
+          "type": "array",
+          "description": "A list of player usernames in the team.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "paymentScreenshotURL": {
+          "type": "string",
+          "description": "URL of the payment screenshot.",
+          "format": "uri"
+        },
+        "tournamentId": {
+          "type": "string",
+          "description": "Reference to Tournament. (Relationship: Tournament 1:N Team)"
+        },
+        "teamLeaderId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N Team)"
+        },
+        "rejectionReason": {
+            "type": "string",
+            "description": "Reason for registration rejection."
+        }
+      },
+      "required": [
+        "id",
+        "teamName",
+        "playerUsernames",
+        "paymentScreenshotURL",
+        "tournamentId",
+        "teamLeaderId"
+      ]
+    },
+    "Registration": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Registration",
+      "type": "object",
+      "description": "Represents a team's registration status for a tournament.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Registration entity."
+        },
+        "teamId": {
+          "type": "string",
+          "description": "Reference to Team. (Relationship: Team 1:N Registration)"
+        },
+        "tournamentId": {
+          "type": "string",
+          "description": "Reference to Tournament. (Relationship: Tournament 1:N Registration)"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the registration (e.g., pending, approved, rejected)."
+        }
+      },
+      "required": [
+        "id",
+        "teamId",
+        "tournamentId",
+        "status"
+      ]
+    },
+    "Match": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Match",
+      "type": "object",
+      "description": "Represents a single match between two teams in a tournament.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the match." },
+        "team1": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" }
+          },
+          "required": ["id", "name"]
+        },
+        "team2": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" }
+          },
+          "required": ["id", "name"]
+        },
+        "team1Score": { "type": "number" },
+        "team2Score": { "type": "number" },
+        "winnerId": { "type": "string" },
+        "status": { "type": "string", "enum": ["scheduled", "completed"] }
+      },
+      "required": ["id", "team1", "team2", "status"]
+    },
+    "Fixture": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Fixture",
+      "type": "object",
+      "description": "Represents a round of matches in a tournament.",
+      "properties": {
+        "id": { "type": "string" },
+        "tournamentId": { "type": "string" },
+        "matches": {
+          "type": "array",
+          "items": { "$ref": "#/backend/entities/Match" }
+        },
+        "round": { "type": "number" }
+      },
+      "required": ["id", "tournamentId", "matches", "round"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores user profile data. Uses path-based ownership; only the user can read/write their own profile.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/tournaments/{tournamentId}",
+        "definition": {
+          "entityName": "Tournament",
+          "schema": {
+            "$ref": "#/backend/entities/Tournament"
+          },
+          "description": "Stores tournament details.  Admins will have create/update access. All users can read to list open tournaments.",
+          "params": [
+            {
+              "name": "tournamentId",
+              "description": "The unique identifier of the tournament."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/teams/{teamId}",
+        "definition": {
+          "entityName": "Team",
+          "schema": {
+            "$ref": "#/backend/entities/Team"
+          },
+          "description": "Stores team information. Includes denormalized 'teamLeaderId' for authorization independence; the team leader can modify the team.",
+          "params": [
+            {
+              "name": "teamId",
+              "description": "The unique identifier of the team."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/registrations/{registrationId}",
+        "definition": {
+          "entityName": "Registration",
+          "schema": {
+            "$ref": "#/backend/entities/Registration"
+          },
+          "description": "Stores team registration information for tournaments. Includes denormalized 'teamId' and 'tournamentId' for authorization independence; admins use these IDs to approve/reject registrations.",
+          "params": [
+            {
+              "name": "registrationId",
+              "description": "The unique identifier of the registration."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/fixtures/{fixtureId}",
+        "definition": {
+          "entityName": "Fixture",
+          "schema": { "$ref": "#/backend/entities/Fixture" },
+          "description": "Stores the generated fixtures for a tournament.",
+          "params": [
+            {
+              "name": "fixtureId",
+              "description": "The unique identifier for the fixture document."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data-structure is designed to support the eSports HQ application's core features, including user authentication, tournament creation, team registration, admin approval, and player dashboards. The design prioritizes authorization independence, clarity, and scalability. Key aspects include:\n\n1.  **Authorization Independence:** The structure avoids hierarchical authorization dependencies by denormalizing authorization-related data. For example, the `Team` documents store the `teamLeaderId`, which allows security rules to validate team leadership without needing to read the associated UserProfile document. Similarly, `Registration` documents store both `teamId` and `tournamentId`, facilitating independent access control for registration status.\n\n2.  **Structural Segregation:** Different data types with varying access requirements are stored in separate collections. User profiles are stored under `/users/{userId}`, ensuring private user data is isolated. Tournaments are stored in the `/tournaments` collection, while team registrations are in `/registrations`. This segregation simplifies security rules and prevents mixing data with different security postures.\n\n3.  **Access Modeling:** Path-based ownership is used for user-owned data (UserProfile). Collaborative data (Team) relies on path based ownership via teamLeaderId denormalized into the document.\n\n4.  **QAPs Support:** The structure supports secure `list` operations. Segregation into separate collections based on access needs (e.g., `/users/{userId}` for private user data, `/tournaments` for public tournament listings) ensures that listing operations can be secured without complex filtering in rules.\n\n5.  **Global Roles (DBAC):** No global roles are required in this design.\n\nThe design choices minimize the need for complex security rules by ensuring that necessary authorization information is directly available within each document, improving performance and simplifying debugging."
+  }
+}

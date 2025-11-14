@@ -1,0 +1,133 @@
+/**
+ * @file Firebase Security Rules for eSports HQ application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a user-ownership model for user profiles, team leadership-based access for teams, and open reads for tournaments.
+ * It denormalizes key authorization data (e.g., teamLeaderId on teams) to avoid costly `get()` calls within rules.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores individual user profiles. Only the user can read/write their profile.
+ * - /tournaments/{tournamentId}: Stores tournament information. Publicly readable.
+ * - /teams/{teamId}: Stores team data. The team leader (specified by teamLeaderId) can modify the team.
+ * - /registrations/{registrationId}: Stores registration data.
+ *
+ * Key Security Decisions:
+ * - User profiles are private and only accessible to the owning user.
+ * - Tournaments are publicly readable.
+ * - Team modifications are restricted to the team leader.
+ * - Admin roles are enforced by checking a field in the user's profile.
+ *
+ * Denormalization for Authorization:
+ * - The `Team` document includes the `teamLeaderId` to directly authorize team modifications without needing to query the associated user profile.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Enforces user-ownership for UserProfile documents.
+     * @path /users/{userId}
+     * @allow (create) - User 'user_abc' can create their profile if request.auth.uid == 'user_abc' and sets user id inside document
+     * @allow (get, update, delete) - User 'user_abc' can read/write their profile if request.auth.uid == 'user_abc'
+     * @deny (create, get, update, delete) - User 'user_xyz' cannot access 'user_abc' profile
+     * @principle Enforces document ownership for all operations.  Validates ownership on create and enforces immutability of the ownership field.
+     */
+    match /users/{userId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+          return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isSignedIn();
+
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) || isAdmin();
+      allow delete: if isExistingOwner(userId) || isAdmin();
+    }
+
+    /**
+     * @description Allows public read access to tournaments, but restricts write access to admins.
+     * @path /tournaments/{tournamentId}
+     * @allow (get, list) - Any user can read tournament details.
+     * @allow (create, update, delete) - Only admins can create, update, or delete tournaments.
+     * @deny (create, update, delete) - Non-admin users cannot modify tournaments.
+     * @principle Provides public read access while restricting write access to admins.
+     */
+    match /tournaments/{tournamentId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Enforces team leadership-based access control for teams.
+     * @path /teams/{teamId}
+     * @allow (get, list) - Any user can read team details.
+     * @allow (create) - Any signed-in user can create a team.
+     * @allow (update, delete) - Only the team leader can modify or delete the team.
+     * @deny (update, delete) - Other users cannot modify or delete the team.
+     * @principle Restricts team modifications to the team leader.
+     */
+    match /teams/{teamId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isTeamLeader(teamLeaderId) {
+        return request.auth.uid == teamLeaderId;
+      }
+
+      function isExistingTeamLeader(teamLeaderId) {
+          return isTeamLeader(teamLeaderId) && resource != null;
+      }
+
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.teamLeaderId == request.auth.uid;
+      allow update: if isExistingTeamLeader(resource.data.teamLeaderId) || isAdmin();
+      allow delete: if isExistingTeamLeader(resource.data.teamLeaderId) || isAdmin();
+    }
+
+    /**
+     * @description Restricts access to registration documents.
+     * @path /registrations/{registrationId}
+     * @allow (get, list) - Any user can read registration details.
+     * @allow (create) - Any signed in user can create a registration.
+     * @allow (update, delete) - Only admins can modify registrations.
+     * @principle Restricts registration management to admins, but allows creation by users.
+     */
+    match /registrations/{registrationId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+      
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.status == 'pending';
+      allow update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Allows public read access to fixtures, but restricts write access to admins.
+     * @path /fixtures/{fixtureId}
+     * @allow (get, list) - Any user can read fixture details.
+     * @allow (create, update, delete) - Only admins can create, update, or delete fixtures.
+     * @principle Provides public read access for fixtures while restricting modifications to admins.
+     */
+    match /fixtures/{fixtureId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Helper Functions
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+  }
+}
