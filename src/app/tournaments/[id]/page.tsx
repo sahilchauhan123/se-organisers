@@ -76,7 +76,8 @@ export default function TournamentDetailPage() {
     error: fixtureError,
   } = useDoc<Fixture>(fixtureRef);
 
-  const isRegistrationFull = teams && tournament && teams.length >= tournament.maxTeamLimit;
+  const approvedTeamsCount = useMemo(() => teams?.filter(team => team.status === 'approved').length || 0, [teams]);
+  const isRegistrationFull = tournament && approvedTeamsCount >= tournament.maxTeamLimit;
 
   const isAlreadyRegistered = useMemo(() => {
     if (!user || !teams) return false;
@@ -128,7 +129,7 @@ export default function TournamentDetailPage() {
             alt={`${tournament.name} banner`}
             fill
             priority
-            className="object-cover"
+            className="object-contain"
           />
         ) : (
           <div className="h-full w-full bg-muted flex items-center justify-center text-muted-foreground">
@@ -216,7 +217,7 @@ export default function TournamentDetailPage() {
                         <Users className="mr-3 h-5 w-5 text-muted-foreground" />
                         <div>
                           <p className="text-muted-foreground">Teams</p>
-                          <p className="font-semibold">{teams?.length || 0} / {tournament.maxTeamLimit}</p>
+                          <p className="font-semibold">{approvedTeamsCount} / {tournament.maxTeamLimit}</p>
                         </div>
                       </div>
 

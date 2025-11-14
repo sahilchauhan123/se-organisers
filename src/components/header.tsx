@@ -62,7 +62,7 @@ export function Header() {
         <div className="flex flex-col gap-4 py-6">
             <Link href="/" className="mb-4 flex items-center space-x-2" onClick={() => setIsSheetOpen(false)}>
                 <Logo className="h-6 w-6 text-primary" />
-                <span className="font-bold">eSports HQ</span>
+                <span className="font-bold">se-organizers</span>
             </Link>
             <nav className="flex flex-col gap-2">
                 {!isAdminPage && (
@@ -78,7 +78,7 @@ export function Header() {
                     </SheetClose>
                     ))
                 )}
-                {isAdminPage && (
+                {user?.isAdmin && (
                     <SheetClose asChild>
                         <Link
                             href="/admin"
@@ -102,26 +102,28 @@ export function Header() {
             <MobileNav />
         </div>
         
-        <div className="hidden flex-1 items-center justify-center md:flex">
+        <div className="flex flex-1 items-center justify-start gap-4">
             <Link href="/" className="flex items-center space-x-2">
                 <Logo className="h-6 w-6 text-primary" />
-                <span className="font-bold sm:inline-block">eSports HQ</span>
+                <span className="font-bold sm:inline-block">se-organizers</span>
             </Link>
-            <nav className="flex items-center gap-6 text-sm lg:gap-8">
-                <Link
-                    href="/tournaments"
-                    className="transition-colors hover:text-foreground/80 text-foreground/60"
-                    >
-                    Tournaments
-                    </Link>
-                    <Link
-                    href="/dashboard"
-                    className="transition-colors hover:text-foreground/80 text-foreground/60"
-                    >
-                    Dashboard
-                    </Link>
-            </nav>
         </div>
+
+        <nav className="hidden items-center justify-center gap-6 text-sm md:flex lg:gap-8">
+            <Link
+                href="/"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+                >
+                Home
+            </Link>
+            <Link
+                href="/tournaments"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+                >
+                Tournaments
+            </Link>
+        </nav>
+
 
         <div className="flex flex-1 items-center justify-end space-x-2">
           {user ? (

@@ -25,7 +25,9 @@ export default function TournamentsPage() {
   const teamsByTournament = useMemo(() => {
     if (!allTeams) return {};
     return allTeams.reduce((acc, team) => {
-      acc[team.tournamentId] = (acc[team.tournamentId] || 0) + 1;
+      if (team.status === 'approved') {
+        acc[team.tournamentId] = (acc[team.tournamentId] || 0) + 1;
+      }
       return acc;
     }, {} as Record<string, number>);
   }, [allTeams]);

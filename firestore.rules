@@ -1,5 +1,5 @@
 /**
- * @file Firebase Security Rules for eSports HQ application.
+ * @file Firebase Security Rules for se-organizers application.
  *
  * Core Philosophy:
  * This ruleset enforces a user-ownership model for user profiles, team leadership-based access for teams, and open reads for tournaments.

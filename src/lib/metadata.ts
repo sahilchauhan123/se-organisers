@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     const tournament = tournamentSnap.data() as Tournament;
   
     return {
-      title: `${tournament.name} | eSports HQ`,
-      description: `Join the ${tournament.name} tournament on eSports HQ. Game: ${tournament.game}.`,
+      title: `${tournament.name} | se-organizers`,
+      description: `Join the ${tournament.name} tournament on se-organizers. Game: ${tournament.game}.`,
       openGraph: {
         title: tournament.name,
         description: `Join the competition for ${tournament.game}!`,
@@ -52,3 +52,5 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   }
   
   
+
+    

@@ -42,7 +42,7 @@ export function TournamentCard({ tournament, registeredTeams, isRegistered }: To
     e.preventDefault(); // Prevent navigating to the tournament page
     const shareData = {
       title: tournament.name,
-      text: `Check out the "${tournament.name}" tournament on eSports HQ!`,
+      text: `Check out the "${tournament.name}" tournament on se-organizers!`,
       url: tournamentUrl,
     };
     if (navigator.share && navigator.canShare(shareData)) {
@@ -79,7 +79,7 @@ export function TournamentCard({ tournament, registeredTeams, isRegistered }: To
             alt={`${tournament.name} banner`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover"
+            className="object-contain"
             data-ai-hint="esports game"
           />
            <Button
@@ -135,3 +135,5 @@ export function TournamentCard({ tournament, registeredTeams, isRegistered }: To
     </Card>
   );
 }
+
+    

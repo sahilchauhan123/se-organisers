@@ -4,7 +4,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user profile in the eSports HQ application.",
+      "description": "Represents a user profile in the se-organizers application.",
       "properties": {
         "id": {
           "type": "string",
@@ -57,7 +57,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Tournament",
       "type": "object",
-      "description": "Represents a tournament in the eSports HQ application.",
+      "description": "Represents a tournament in the se-organizers application.",
       "properties": {
         "id": {
           "type": "string",
@@ -320,6 +320,8 @@
         }
       }
     ],
-    "reasoning": "The Firestore data-structure is designed to support the eSports HQ application's core features, including user authentication, tournament creation, team registration, admin approval, and player dashboards. The design prioritizes authorization independence, clarity, and scalability. Key aspects include:\n\n1.  **Authorization Independence:** The structure avoids hierarchical authorization dependencies by denormalizing authorization-related data. For example, the `Team` documents store the `teamLeaderId`, which allows security rules to validate team leadership without needing to read the associated UserProfile document. Similarly, `Registration` documents store both `teamId` and `tournamentId`, facilitating independent access control for registration status.\n\n2.  **Structural Segregation:** Different data types with varying access requirements are stored in separate collections. User profiles are stored under `/users/{userId}`, ensuring private user data is isolated. Tournaments are stored in the `/tournaments` collection, while team registrations are in `/registrations`. This segregation simplifies security rules and prevents mixing data with different security postures.\n\n3.  **Access Modeling:** Path-based ownership is used for user-owned data (UserProfile). Collaborative data (Team) relies on path based ownership via teamLeaderId denormalized into the document.\n\n4.  **QAPs Support:** The structure supports secure `list` operations. Segregation into separate collections based on access needs (e.g., `/users/{userId}` for private user data, `/tournaments` for public tournament listings) ensures that listing operations can be secured without complex filtering in rules.\n\n5.  **Global Roles (DBAC):** No global roles are required in this design.\n\nThe design choices minimize the need for complex security rules by ensuring that necessary authorization information is directly available within each document, improving performance and simplifying debugging."
+    "reasoning": "The Firestore data-structure is designed to support the se-organizers application's core features, including user authentication, tournament creation, team registration, admin approval, and player dashboards. The design prioritizes authorization independence, clarity, and scalability. Key aspects include:\n\n1.  **Authorization Independence:** The structure avoids hierarchical authorization dependencies by denormalizing authorization-related data. For example, the `Team` documents store the `teamLeaderId`, which allows security rules to validate team leadership without needing to read the associated UserProfile document. Similarly, `Registration` documents store both `teamId` and `tournamentId`, facilitating independent access control for registration status.\n\n2.  **Structural Segregation:** Different data types with varying access requirements are stored in separate collections. User profiles are stored under `/users/{userId}`, ensuring private user data is isolated. Tournaments are stored in the `/tournaments` collection, while team registrations are in `/registrations`. This segregation simplifies security rules and prevents mixing data with different security postures.\n\n3.  **Access Modeling:** Path-based ownership is used for user-owned data (UserProfile). Collaborative data (Team) relies on path based ownership via teamLeaderId denormalized into the document.\n\n4.  **QAPs Support:** The structure supports secure `list` operations. Segregation into separate collections based on access needs (e.g., `/users/{userId}` for private user data, `/tournaments` for public tournament listings) ensures that listing operations can be secured without complex filtering in rules.\n\n5.  **Global Roles (DBAC):** No global roles are required in this design.\n\nThe design choices minimize the need for complex security rules by ensuring that necessary authorization information is directly available within each document, improving performance and simplifying debugging."
   }
 }
+
+    

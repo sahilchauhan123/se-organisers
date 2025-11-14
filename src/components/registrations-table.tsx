@@ -122,7 +122,7 @@ function RegistrationRow({ team, showTournamentName }: { team: Team, showTournam
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className="relative aspect-video w-full mt-4">
-                            <Image src={team.paymentScreenshotURL} alt="Payment screenshot" layout="fill" objectFit='contain' />
+                            <Image src={team.paymentScreenshotURL} alt="Payment screenshot" fill className="object-contain" />
                         </div>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Close</AlertDialogCancel>
