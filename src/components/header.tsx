@@ -23,14 +23,16 @@ import {
   User as UserIcon,
   Home,
   Menu,
+  LogIn,
+  UserPlus,
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from './ui/sheet';
 import { useState } from 'react';
 
 const navLinks = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/tournaments', label: 'Tournaments', icon: Swords },
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/', label: 'Home', icon: Home, auth: false },
+  { href: '/tournaments', label: 'Tournaments', icon: Swords, auth: false },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, auth: true },
 ];
 
 export function Header() {
@@ -65,19 +67,21 @@ export function Header() {
                 <span className="font-bold">se-organizers</span>
             </Link>
             <nav className="flex flex-col gap-2">
-                {!isAdminPage && (
-                    navLinks.map((link) => (
-                    <SheetClose asChild key={link.href}>
-                        <Link
-                            href={link.href}
-                            className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent"
-                        >
-                            <link.icon className="h-5 w-5" />
-                            {link.label}
-                        </Link>
-                    </SheetClose>
-                    ))
-                )}
+                {navLinks.map((link) => {
+                    if (link.auth && !user) return null;
+                    if (isAdminPage) return null;
+                    return (
+                        <SheetClose asChild key={link.href}>
+                            <Link
+                                href={link.href}
+                                className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent"
+                            >
+                                <link.icon className="h-5 w-5" />
+                                {link.label}
+                            </Link>
+                        </SheetClose>
+                    )
+                })}
                 {user?.isAdmin && (
                     <SheetClose asChild>
                         <Link
@@ -89,6 +93,23 @@ export function Header() {
                         </Link>
                     </SheetClose>
                 )}
+                 {!user && (
+                    <>
+                        <DropdownMenuSeparator />
+                        <SheetClose asChild>
+                            <Link href="/login" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent">
+                                <LogIn className="h-5 w-5" />
+                                Login
+                            </Link>
+                        </SheetClose>
+                        <SheetClose asChild>
+                            <Link href="/signup" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent">
+                                <UserPlus className="h-5 w-5" />
+                                Sign Up
+                            </Link>
+                        </SheetClose>
+                    </>
+                )}
             </nav>
         </div>
       </SheetContent>
@@ -98,18 +119,17 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
-        <div className="flex items-center md:hidden">
-            <MobileNav />
-        </div>
-        
-        <div className="flex flex-1 items-center justify-start gap-4">
-            <Link href="/" className="flex items-center space-x-2">
+        <div className="flex items-center">
+            <div className="md:hidden">
+              <MobileNav />
+            </div>
+            <Link href="/" className="ml-2 md:ml-0 flex items-center space-x-2">
                 <Logo className="h-6 w-6 text-primary" />
                 <span className="font-bold sm:inline-block">se-organizers</span>
             </Link>
         </div>
-
-        <nav className="hidden items-center justify-center gap-6 text-sm md:flex lg:gap-8">
+        
+        <nav className="hidden flex-1 items-center justify-center gap-6 text-sm md:flex">
             <Link
                 href="/"
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
@@ -122,6 +142,22 @@ export function Header() {
                 >
                 Tournaments
             </Link>
+            {user && (
+                <Link
+                    href="/dashboard"
+                    className="transition-colors hover:text-foreground/80 text-foreground/60"
+                    >
+                    Dashboard
+                </Link>
+            )}
+            {user?.isAdmin && (
+                <Link
+                    href="/admin"
+                    className="transition-colors hover:text-foreground/80 text-foreground/60"
+                    >
+                    Admin
+                </Link>
+            )}
         </nav>
 
 
@@ -181,14 +217,23 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="space-x-2 mr-2">
-              <Button asChild variant="ghost">
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
-            </div>
+            <>
+              {/* Desktop buttons */}
+              <div className="hidden sm:flex items-center space-x-2">
+                <Button asChild variant="ghost">
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/signup">Sign Up</Link>
+                </Button>
+              </div>
+              {/* Mobile login button */}
+              <div className="sm:hidden">
+                <Button asChild variant="ghost">
+                  <Link href="/login">Login</Link>
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </div>
