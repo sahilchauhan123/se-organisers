@@ -38,37 +38,50 @@ export function TournamentCard({ tournament, registeredTeams, isRegistered }: To
 
   const currencySymbol = tournament.currency === 'INR' ? '₹' : '$';
 
-  const handleShare = async (e: React.MouseEvent) => {
+ const handleShare = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigating to the tournament page
     const shareData = {
       title: tournament.name,
       text: `Check out the "${tournament.name}" tournament on se-organizers!`,
       url: tournamentUrl,
     };
+
+    const fallbackCopy = () => {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(tournamentUrl).then(() => {
+          toast({
+            title: 'Link Copied!',
+            description: 'The tournament link has been copied to your clipboard.',
+          });
+        }).catch(err => {
+          console.error('Error copying to clipboard:', err);
+          toast({
+            title: 'Copy Link',
+            description: `Could not copy automatically. Please copy this link: ${tournamentUrl}`,
+          });
+        });
+      } else {
+        toast({
+          title: 'Copy Link',
+          description: `Could not copy automatically. Please copy this link: ${tournamentUrl}`,
+        });
+      }
+    };
+
+    // Check if the Web Share API is available
     if (navigator.share && navigator.canShare(shareData)) {
       try {
         await navigator.share(shareData);
       } catch (error) {
         console.error('Error sharing:', error);
+        // Fallback to clipboard if sharing fails
+        fallbackCopy();
       }
     } else {
-      try {
-        await navigator.clipboard.writeText(tournamentUrl);
-        toast({
-          title: 'Link Copied!',
-          description: 'The tournament link has been copied to your clipboard.',
-        });
-      } catch (error) {
-        console.error('Error copying to clipboard:', error);
-        toast({
-          title: 'Error',
-          description: 'Could not copy link to clipboard.',
-          variant: 'destructive',
-        });
-      }
+      // Fallback for browsers that don't support Web Share API
+      fallbackCopy();
     }
   };
-
 
   return (
     <Card className="flex flex-col overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 bg-muted/20 border-border/50">
