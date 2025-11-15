@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  signInWithPopup,
-  GoogleAuthProvider,
   updateProfile,
 } from 'firebase/auth';
 import { useAuth, initiateEmailSignUp } from '@/firebase';
@@ -22,7 +20,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/icons';
-import { Chrome } from 'lucide-react';
 import { setDoc, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -95,40 +92,7 @@ export default function SignupPage() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
 
-      // For Google Sign-in, we can't force these details on this screen.
-      // We'll use their Google info and they can change it in their profile.
-      await setDoc(doc(firestore, "users", user.uid), {
-        id: user.uid,
-        uid: user.uid,
-        fullName: user.displayName,
-        username: user.displayName || user.email?.split('@')[0],
-        email: user.email,
-        photoURL: user.photoURL,
-        country: 'N/A',
-        state: 'N/A',
-        city: 'N/A',
-        isAdmin: user.email === 'admin@example.com',
-      }, { merge: true });
-
-      toast({ title: 'Success', description: 'Signed up successfully.' });
-      router.push('/dashboard');
-    } catch (error: any) {
-      toast({
-        title: 'Google Sign-Up Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <Card className="w-full max-w-md">
@@ -240,20 +204,7 @@ export default function SignupPage() {
             {isLoading ? 'Creating Account...' : 'Sign Up'}
           </Button>
         </form>
-         <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-          <Chrome className="mr-2 h-4 w-4" />
-          Google
-        </Button>
+
       </CardContent>
       <CardFooter className="justify-center text-sm">
         <p>

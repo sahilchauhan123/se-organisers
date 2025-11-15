@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  signInWithPopup,
-  GoogleAuthProvider,
   UserCredential,
 } from 'firebase/auth';
 import { useAuth as useFirebaseAuth, useFirestore, initiateEmailSignIn } from '@/firebase';
@@ -22,7 +20,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/icons';
-import { Chrome } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 
 export default function LoginPage() {
@@ -77,22 +74,7 @@ export default function LoginPage() {
         });
   };
   
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    const provider = new GoogleAuthProvider();
-    try {
-      const userCredential = await signInWithPopup(auth, provider);
-      await handleSuccessfulLogin(userCredential);
-    } catch (error: any) {
-      toast({
-        title: 'Google Sign-In Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   return (
     <Card className="w-full max-w-sm">
@@ -132,20 +114,7 @@ export default function LoginPage() {
             {isLoading ? 'Logging in...' : 'Login'}
           </Button>
         </form>
-        <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-          <Chrome className="mr-2 h-4 w-4" />
-          Google
-        </Button>
+
       </CardContent>
       <CardFooter className="justify-center text-sm">
         <p>
